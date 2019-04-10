@@ -1,7 +1,4 @@
 library sorted_chips_row;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export './src/chip_spec.dart' show ChipSpec;
+export './src/sorted_chips_row.dart' show SortedChipsRow;
