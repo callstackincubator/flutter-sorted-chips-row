@@ -1,6 +1,7 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:observable/observable.dart';
 import './chip_spec.dart';
+import './sorted_chip.dart';
 
 class _SortedChipsRowState extends State<SortedChipsRow>
     with SingleTickerProviderStateMixin {
@@ -117,7 +118,7 @@ class _SortedChipsRowState extends State<SortedChipsRow>
                           child: FittedBox(
                             alignment: Alignment.centerLeft,
                             fit: BoxFit.scaleDown,
-                            child: ChartChip(
+                            child: SortedChip(
                                 chipSpec: chips[index],
                                 isEnabled: enabledChipsIndexes.contains(index),
                                 widthCallback: (width) {
