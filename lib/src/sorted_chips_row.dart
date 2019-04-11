@@ -25,15 +25,14 @@ class _SortedChipsRowState extends State<SortedChipsRow>
   ScrollController scrollController;
   AnimationController animationController;
 
-  _SortedChipsRowState() {
-    chipsWidth.addAll(List.filled(this.widget.chips.length, 0.0));
-    chipsAnimations.addAll(List.filled(
-        this.widget.chips.length, AlwaysStoppedAnimation(RelativeRect.fill)));
-  }
-
   @override
   void initState() {
     super.initState();
+
+    chipsWidth.addAll(List.filled(this.widget.chips.length, 0.0));
+    chipsAnimations.addAll(List.filled(
+        this.widget.chips.length, AlwaysStoppedAnimation(RelativeRect.fill)));
+
     scrollController = ScrollController();
     animationController = AnimationController(
         vsync: this,
