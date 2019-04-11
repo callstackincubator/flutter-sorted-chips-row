@@ -3,9 +3,13 @@ import './chip_spec.dart';
 import './sorted_chip.dart';
 
 class SortedChipsRow extends StatefulWidget {
-  final List<ChipSpec> chips;
+  static bool _defaultOnPress(int _, bool currentlyEnabled) =>
+      !currentlyEnabled;
 
-  SortedChipsRow({this.chips});
+  final List<ChipSpec> chips;
+  final bool Function(int, bool) onPress;
+
+  SortedChipsRow({this.chips = const [], this.onPress = _defaultOnPress});
 
   @override
   _SortedChipsRowState createState() {
@@ -49,27 +53,31 @@ class _SortedChipsRowState extends State<SortedChipsRow>
     super.dispose();
   }
 
-  _toggleChip(int chipIndex) {
-    if (!enabledChipsIndexes.remove(chipIndex)) {
-      enabledChipsIndexes.add(chipIndex);
+  _toggleChip(int chipIndex, bool isEnabled) {
+    bool nextEnabled = this.widget.onPress(chipIndex, isEnabled);
+    if (nextEnabled != isEnabled) {
+      if (nextEnabled) {
+        enabledChipsIndexes.add(chipIndex);
+      } else {
+        enabledChipsIndexes.remove(chipIndex);
+      }
+      final chipsOrder = getChipsOrder();
+
+      double totalOffset = 0.0;
+      chipsOrder.forEach((chipIndex) {
+        final currentRect = chipsAnimations[chipIndex].value;
+        final targetRect = RelativeRect.fromLTRB(totalOffset, 0.0,
+            context.size.width - totalOffset - chipsWidth[chipIndex], 0.0);
+        chipsAnimations[chipIndex] =
+            RelativeRectTween(begin: currentRect, end: targetRect)
+                .animate(animationController);
+        totalOffset += chipsWidth[chipIndex] + FIXED_HORIZONTAL_PADDING;
+      });
+
+      animationController
+        ..reset()
+        ..animateTo(1.0);
     }
-
-    final chipsOrder = getChipsOrder();
-
-    double totalOffset = 0.0;
-    chipsOrder.forEach((chipIndex) {
-      final currentRect = chipsAnimations[chipIndex].value;
-      final targetRect = RelativeRect.fromLTRB(totalOffset, 0.0,
-          context.size.width - totalOffset - chipsWidth[chipIndex], 0.0);
-      chipsAnimations[chipIndex] =
-          RelativeRectTween(begin: currentRect, end: targetRect)
-              .animate(animationController);
-      totalOffset += chipsWidth[chipIndex] + FIXED_HORIZONTAL_PADDING;
-    });
-
-    animationController
-      ..reset()
-      ..animateTo(1.0);
   }
 
   List<int> getChipsOrder() {
@@ -116,20 +124,21 @@ class _SortedChipsRowState extends State<SortedChipsRow>
               overflow: Overflow.visible,
               fit: StackFit.expand,
               children: List.from(this.widget.chips.asMap().map((index, chip) {
+                bool isEnabled = enabledChipsIndexes.contains(index);
                 return MapEntry(
                     index,
                     PositionedTransition(
                         key: Key(index.toString()),
                         child: GestureDetector(
                           onTap: () {
-                            _toggleChip(index);
+                            _toggleChip(index, isEnabled);
                           },
                           child: FittedBox(
                             alignment: Alignment.centerLeft,
                             fit: BoxFit.scaleDown,
                             child: SortedChip(
                                 chipSpec: this.widget.chips[index],
-                                isEnabled: enabledChipsIndexes.contains(index),
+                                isEnabled: isEnabled,
                                 widthCallback: (width) {
                                   chipsWidth[index] = width;
                                   perhapsLayout();

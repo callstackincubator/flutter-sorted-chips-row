@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 class ChipSpec {
   final Key key;
   final String label;
+  final bool initiallyEnabled;
 
   final TextStyle labelStyle;
   final Widget avatar;
@@ -15,10 +16,11 @@ class ChipSpec {
   ChipSpec(
       {this.key,
       @required this.label,
+      this.initiallyEnabled = false,
       this.labelStyle,
       this.avatar,
       this.enabledColor,
       this.disabledColor,
-      this.clipBehaviour,
+      this.clipBehaviour = Clip.none,
       this.elevation});
 }
