@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:observable/observable.dart';
 import './chip_spec.dart';
 import './sorted_chip.dart';
+
+class SortedChipsRow extends StatefulWidget {
+  final List<ChipSpec> chips;
+
+  SortedChipsRow({this.chips});
+
+  @override
+  _SortedChipsRowState createState() {
+    return new _SortedChipsRowState();
+  }
+}
 
 class _SortedChipsRowState extends State<SortedChipsRow>
     with SingleTickerProviderStateMixin {
   static const FIXED_HEIGHT = 60.0;
   static const FIXED_HORIZONTAL_PADDING = 8.0;
 
-  final List<ChipSpec> chips;
-  final List<double> chipsWidth;
-  final List<Animation<RelativeRect>> chipsAnimations;
-  final List<int> enabledChipsIndexes;
+  final List<double> chipsWidth = [];
+  final List<Animation<RelativeRect>> chipsAnimations = [];
+  final List<int> enabledChipsIndexes = [];
   double totalWidth = 0.0;
   ScrollController scrollController;
   AnimationController animationController;
 
-  _SortedChipsRowState(this.enabledChipsIndexes, this.chips)
-      : chipsWidth = List.filled(chips.length, 0.0),
-        chipsAnimations = List.filled(
-            chips.length, AlwaysStoppedAnimation(RelativeRect.fill));
+  _SortedChipsRowState() {
+    chipsWidth.addAll(List.filled(this.widget.chips.length, 0.0));
+    chipsAnimations.addAll(List.filled(
+        this.widget.chips.length, AlwaysStoppedAnimation(RelativeRect.fill)));
+  }
 
   @override
   void initState() {
@@ -65,7 +75,7 @@ class _SortedChipsRowState extends State<SortedChipsRow>
 
   List<int> getChipsOrder() {
     final chipsOrder = List<int>.from(enabledChipsIndexes);
-    for (var chipIndex = 0; chipIndex < chips.length; chipIndex++) {
+    for (var chipIndex = 0; chipIndex < this.widget.chips.length; chipIndex++) {
       if (!enabledChipsIndexes.contains(chipIndex)) {
         chipsOrder.add(chipIndex);
       }
@@ -80,7 +90,7 @@ class _SortedChipsRowState extends State<SortedChipsRow>
     }
 
     double totalOffset = 0.0;
-    for (var chipIndex = 0; chipIndex < chips.length; chipIndex++) {
+    for (var chipIndex = 0; chipIndex < this.widget.chips.length; chipIndex++) {
       final chipRelativeRect = RelativeRect.fromLTRB(totalOffset, 0.0,
           context.size.width - totalOffset - chipsWidth[chipIndex], 0.0);
       chipsAnimations[chipIndex] = AlwaysStoppedAnimation(chipRelativeRect);
@@ -106,7 +116,7 @@ class _SortedChipsRowState extends State<SortedChipsRow>
             child: Stack(
               overflow: Overflow.visible,
               fit: StackFit.expand,
-              children: List.from(chips.asMap().map((index, chip) {
+              children: List.from(this.widget.chips.asMap().map((index, chip) {
                 return MapEntry(
                     index,
                     PositionedTransition(
@@ -119,7 +129,7 @@ class _SortedChipsRowState extends State<SortedChipsRow>
                             alignment: Alignment.centerLeft,
                             fit: BoxFit.scaleDown,
                             child: SortedChip(
-                                chipSpec: chips[index],
+                                chipSpec: this.widget.chips[index],
                                 isEnabled: enabledChipsIndexes.contains(index),
                                 widthCallback: (width) {
                                   chipsWidth[index] = width;
@@ -132,21 +142,5 @@ class _SortedChipsRowState extends State<SortedChipsRow>
             ),
           )),
     );
-  }
-}
-
-class SortedChipsRow extends StatefulWidget {
-  final ObservableList<int> enabledChartSeries;
-  SortedChipsRow(this.enabledChartSeries);
-
-  @override
-  _SortedChipsRowState createState() {
-    return new _SortedChipsRowState(enabledChartSeries, [
-      ChipSpec(label: 'temperature', bgColor: Colors.amber),
-      ChipSpec(label: 'blood pressure', bgColor: Colors.cyan),
-      ChipSpec(label: 'heart rate', bgColor: Colors.green),
-      ChipSpec(
-          label: 'Oh no, this label is a bit long', bgColor: Colors.indigo),
-    ]);
   }
 }

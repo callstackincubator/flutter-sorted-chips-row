@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:after_layout/after_layout.dart';
 import './chip_spec.dart';
 
+class SortedChip extends StatefulWidget {
+  final ChipSpec chipSpec;
+  final Function widthCallback;
+  final isEnabled;
+
+  const SortedChip({Key key, this.chipSpec, this.widthCallback, this.isEnabled})
+      : super(key: key);
+
+  @override
+  _SortedChipState createState() => _SortedChipState();
+}
+
 class _SortedChipState extends State<SortedChip>
     with AfterLayoutMixin<SortedChip> {
   static const CHIP_ICON_SIZE = 15.0;
@@ -14,41 +26,26 @@ class _SortedChipState extends State<SortedChip>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final Color color = this.widget.isEnabled
+        ? this.widget.chipSpec.enabledColor ?? theme.buttonColor
+        : this.widget.chipSpec.disabledColor ?? theme.disabledColor;
+
     return Chip(
-        avatar: DecoratedBox(
+        avatar: this.widget.chipSpec.avatar ?? DecoratedBox(
           position: DecorationPosition.foreground,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(100.0)),
-              border: Border.all(
-                  color: this.widget.isEnabled
-                      ? this.widget.chipSpec.bgColor
-                      : theme.disabledColor)),
+              border: Border.all(color: color)),
           child: CircleAvatar(
-              backgroundColor: this.widget.isEnabled
-                  ? Colors.white
-                  : theme.buttonColor,
-              child: Icon(Icons.check,
-                  size: CHIP_ICON_SIZE,
-                  color: this.widget.isEnabled
-                      ? this.widget.chipSpec.bgColor
-                      : theme.disabledColor)),
+              backgroundColor:
+                  this.widget.isEnabled ? Colors.white : theme.buttonColor,
+              child: Icon(Icons.check, size: CHIP_ICON_SIZE, color: color)),
         ),
         key: this.widget.key,
+        backgroundColor: color,
         label: Text(this.widget.chipSpec.label),
-        backgroundColor: this.widget.isEnabled
-            ? this.widget.chipSpec.bgColor
-            : theme.buttonColor);
+        labelStyle: this.widget.chipSpec.labelStyle,
+        clipBehavior: this.widget.chipSpec.clipBehaviour ?? Clip.none,
+        elevation: this.widget.chipSpec.elevation);
   }
-}
-
-class SortedChip extends StatefulWidget {
-  final ChipSpec chipSpec;
-  final Function widthCallback;
-  final isEnabled;
-
-  const SortedChip({Key key, this.chipSpec, this.widthCallback, this.isEnabled})
-      : super(key: key);
-
-  @override
-  _SortedChipState createState() => _SortedChipState();
 }
