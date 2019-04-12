@@ -49,7 +49,7 @@ class _SortedChipState extends State<SortedChip>
               ),
           key: this.widget.key,
           backgroundColor: color,
-          label: Text(this.widget.chipSpec.label),
+          label: this.widget.chipSpec.label,
           labelStyle: this.widget.chipSpec.labelStyle,
           clipBehavior: this.widget.chipSpec.clipBehaviour,
           elevation: this.widget.chipSpec.elevation),

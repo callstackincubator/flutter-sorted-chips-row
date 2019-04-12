@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 class ChipSpec {
   final Key key;
-  final String label;
+  final Widget label;
   final bool initiallyEnabled;
 
   final TextStyle labelStyle;
