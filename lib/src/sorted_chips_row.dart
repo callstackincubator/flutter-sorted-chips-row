@@ -120,40 +120,39 @@ class _SortedChipsRowState extends State<SortedChipsRow>
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: LimitedBox(
-          maxWidth: totalWidth,
-          maxHeight: FIXED_HEIGHT,
-          child: Container(
+        maxWidth: totalWidth,
+        maxHeight: FIXED_HEIGHT,
+        child: Container(
             alignment: Alignment.centerLeft,
             height: FIXED_HEIGHT,
             child: Stack(
-              overflow: Overflow.visible,
-              fit: StackFit.expand,
-              children: List.from(this.widget.chips.asMap().map((index, chip) {
-                bool isEnabled = enabledChipsIndexes.contains(index);
-                return MapEntry(
-                    index,
-                    PositionedTransition(
-                        key: Key(index.toString()),
-                        child: GestureDetector(
-                          onTap: () {
-                            _toggleChip(index, isEnabled);
-                          },
-                          child: FittedBox(
-                            alignment: Alignment.centerLeft,
-                            fit: BoxFit.scaleDown,
-                            child: SortedChip(
-                                chipSpec: this.widget.chips[index],
-                                isEnabled: isEnabled,
-                                widthCallback: (width) {
-                                  chipsWidth[index] = width;
-                                  perhapsLayout();
-                                }),
-                          ),
+                overflow: Overflow.visible,
+                fit: StackFit.expand,
+                children: List.of(
+                    Iterable<int>.generate(this.widget.chips.length)
+                        .map((index) {
+                  bool isEnabled = enabledChipsIndexes.contains(index);
+                  return PositionedTransition(
+                      key: Key(index.toString()),
+                      child: GestureDetector(
+                        onTap: () {
+                          _toggleChip(index, isEnabled);
+                        },
+                        child: FittedBox(
+                          alignment: Alignment.centerLeft,
+                          fit: BoxFit.scaleDown,
+                          child: SortedChip(
+                              chipSpec: this.widget.chips[index],
+                              isEnabled: isEnabled,
+                              widthCallback: (width) {
+                                chipsWidth[index] = width;
+                                perhapsLayout();
+                              }),
                         ),
-                        rect: chipsAnimations[index]));
-              }).values),
-            ),
-          )),
+                      ),
+                      rect: chipsAnimations[index]);
+                })))),
+      ),
     );
   }
 }
