@@ -30,22 +30,29 @@ class _SortedChipState extends State<SortedChip>
         ? this.widget.chipSpec.enabledColor ?? theme.buttonColor
         : this.widget.chipSpec.disabledColor ?? theme.disabledColor;
 
-    return Chip(
-        avatar: this.widget.chipSpec.avatar ?? DecoratedBox(
-          position: DecorationPosition.foreground,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(100.0)),
-              border: Border.all(color: color)),
-          child: CircleAvatar(
-              backgroundColor:
-                  this.widget.isEnabled ? Colors.white : theme.buttonColor,
-              child: Icon(Icons.check, size: CHIP_ICON_SIZE, color: color)),
-        ),
-        key: this.widget.key,
-        backgroundColor: color,
-        label: Text(this.widget.chipSpec.label),
-        labelStyle: this.widget.chipSpec.labelStyle,
-        clipBehavior: this.widget.chipSpec.clipBehaviour,
-        elevation: this.widget.chipSpec.elevation);
+    return Material(
+      type: MaterialType.card,
+      color: Colors.transparent,
+      child: Chip(
+          avatar: this.widget.chipSpec.avatar ??
+              DecoratedBox(
+                position: DecorationPosition.foreground,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(100.0)),
+                    border: Border.all(color: color)),
+                child: CircleAvatar(
+                    backgroundColor: this.widget.isEnabled
+                        ? Colors.white
+                        : theme.buttonColor,
+                    child:
+                        Icon(Icons.check, size: CHIP_ICON_SIZE, color: color)),
+              ),
+          key: this.widget.key,
+          backgroundColor: color,
+          label: Text(this.widget.chipSpec.label),
+          labelStyle: this.widget.chipSpec.labelStyle,
+          clipBehavior: this.widget.chipSpec.clipBehaviour,
+          elevation: this.widget.chipSpec.elevation),
+    );
   }
 }
