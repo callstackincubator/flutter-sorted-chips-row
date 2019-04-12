@@ -36,6 +36,11 @@ class _SortedChipsRowState extends State<SortedChipsRow>
     chipsWidth.addAll(List.filled(this.widget.chips.length, 0.0));
     chipsAnimations.addAll(List.filled(
         this.widget.chips.length, AlwaysStoppedAnimation(RelativeRect.fill)));
+    for (int i = 0; i < this.widget.chips.length; i++) {
+      if (this.widget.chips[i].initiallyEnabled) {
+        enabledChipsIndexes.add(i);
+      }
+    }
 
     scrollController = ScrollController();
     animationController = AnimationController(

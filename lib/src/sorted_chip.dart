@@ -5,9 +5,8 @@ import './chip_spec.dart';
 class SortedChip extends StatefulWidget {
   final ChipSpec chipSpec;
   final Function widthCallback;
-  final isEnabled;
 
-  const SortedChip({Key key, this.chipSpec, this.widthCallback, this.isEnabled})
+  const SortedChip({Key key, this.chipSpec, this.widthCallback})
       : super(key: key);
 
   @override
