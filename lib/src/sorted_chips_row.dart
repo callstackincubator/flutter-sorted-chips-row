@@ -2,14 +2,45 @@ import 'package:flutter/material.dart';
 import './chip_spec.dart';
 import './sorted_chip.dart';
 
+class ChipState {
+  final ChipSpec spec;
+  final int initialIndex;
+
+  double _width;
+
+  int _currentIndex;
+  int get currentIndex => _currentIndex;
+
+  bool _isEnabled;
+  bool get isEnabled => _isEnabled;
+
+  ChipState({this.spec, this.initialIndex}) {
+    this._isEnabled = this.spec.initiallyEnabled;
+    this._currentIndex = this.initialIndex;
+    this._width = 0.0;
+  }
+}
+
 class SortedChipsRow extends StatefulWidget {
+  static int _defaultComparator(ChipState a, ChipState b) {
+    if (a.isEnabled != b.isEnabled) {
+      return (a.isEnabled ? -1 : 1);
+    } else {
+      return (a.currentIndex - b.currentIndex);
+    }
+  }
+
   static bool _defaultOnPress(int _, bool currentlyEnabled) =>
       !currentlyEnabled;
 
   final List<ChipSpec> chips;
   final bool Function(int, bool) onPress;
+  final Comparator<ChipState> comparator;
 
-  SortedChipsRow({this.chips = const [], this.onPress = _defaultOnPress});
+  SortedChipsRow(
+      {this.chips = const [],
+      this.onPress = _defaultOnPress,
+      this.comparator = _defaultComparator});
 
   @override
   _SortedChipsRowState createState() {
@@ -22,9 +53,8 @@ class _SortedChipsRowState extends State<SortedChipsRow>
   static const FIXED_HEIGHT = 60.0;
   static const FIXED_HORIZONTAL_PADDING = 8.0;
 
-  final List<double> chipsWidth = [];
+  final List<ChipState> chipStates = [];
   final List<Animation<RelativeRect>> chipsAnimations = [];
-  final List<int> enabledChipsIndexes = [];
   double totalWidth = 0.0;
   ScrollController scrollController;
   AnimationController animationController;
@@ -33,14 +63,12 @@ class _SortedChipsRowState extends State<SortedChipsRow>
   void initState() {
     super.initState();
 
-    chipsWidth.addAll(List.filled(this.widget.chips.length, 0.0));
+    this.widget.chips.asMap().forEach((index, spec) {
+      chipStates.add(ChipState(spec: spec, initialIndex: index));
+    });
+
     chipsAnimations.addAll(List.filled(
         this.widget.chips.length, AlwaysStoppedAnimation(RelativeRect.fill)));
-    for (int i = 0; i < this.widget.chips.length; i++) {
-      if (this.widget.chips[i].initiallyEnabled) {
-        enabledChipsIndexes.add(i);
-      }
-    }
 
     scrollController = ScrollController();
     animationController = AnimationController(
@@ -58,25 +86,27 @@ class _SortedChipsRowState extends State<SortedChipsRow>
     super.dispose();
   }
 
-  _toggleChip(int chipIndex, bool isEnabled) {
-    bool nextEnabled = this.widget.onPress(chipIndex, isEnabled);
+  _toggleChip(int chipIndex) {
+    final ChipState chipState = chipStates[chipIndex];
+    assert(chipState.initialIndex == chipIndex);
+
+    bool isEnabled = chipState._isEnabled;
+    bool nextEnabled = this.widget.onPress(chipIndex, chipState._isEnabled);
     if (nextEnabled != isEnabled) {
-      if (nextEnabled) {
-        enabledChipsIndexes.add(chipIndex);
-      } else {
-        enabledChipsIndexes.remove(chipIndex);
-      }
-      final chipsOrder = getChipsOrder();
+      chipState._isEnabled = nextEnabled;
+      var sortedStates = List.of(chipStates)..sort(this.widget.comparator);
+      Iterable.generate(sortedStates.length).forEach((index) => sortedStates[index]._currentIndex = index);
 
       double totalOffset = 0.0;
-      chipsOrder.forEach((chipIndex) {
+      sortedStates.forEach((chipState) {
+        final chipIndex = chipState.initialIndex;
         final currentRect = chipsAnimations[chipIndex].value;
         final targetRect = RelativeRect.fromLTRB(totalOffset, 0.0,
-            context.size.width - totalOffset - chipsWidth[chipIndex], 0.0);
+            context.size.width - totalOffset - chipState._width, 0.0);
         chipsAnimations[chipIndex] =
             RelativeRectTween(begin: currentRect, end: targetRect)
                 .animate(animationController);
-        totalOffset += chipsWidth[chipIndex] + FIXED_HORIZONTAL_PADDING;
+        totalOffset += chipState._width + FIXED_HORIZONTAL_PADDING;
       });
 
       animationController
@@ -85,28 +115,17 @@ class _SortedChipsRowState extends State<SortedChipsRow>
     }
   }
 
-  List<int> getChipsOrder() {
-    final chipsOrder = List<int>.from(enabledChipsIndexes);
-    for (var chipIndex = 0; chipIndex < this.widget.chips.length; chipIndex++) {
-      if (!enabledChipsIndexes.contains(chipIndex)) {
-        chipsOrder.add(chipIndex);
-      }
-    }
-
-    return chipsOrder;
-  }
-
   void perhapsLayout() {
-    if (chipsWidth.any((width) => width == 0.0)) {
+    if (chipStates.any((chipState) => chipState._width == 0.0)) {
       return;
     }
 
     double totalOffset = 0.0;
     for (var chipIndex = 0; chipIndex < this.widget.chips.length; chipIndex++) {
       final chipRelativeRect = RelativeRect.fromLTRB(totalOffset, 0.0,
-          context.size.width - totalOffset - chipsWidth[chipIndex], 0.0);
+          context.size.width - totalOffset - chipStates[chipIndex]._width, 0.0);
       chipsAnimations[chipIndex] = AlwaysStoppedAnimation(chipRelativeRect);
-      totalOffset += chipsWidth[chipIndex] + FIXED_HORIZONTAL_PADDING;
+      totalOffset += chipStates[chipIndex]._width + FIXED_HORIZONTAL_PADDING;
     }
 
     this.setState(() {
@@ -131,12 +150,12 @@ class _SortedChipsRowState extends State<SortedChipsRow>
                 children: List.of(
                     Iterable<int>.generate(this.widget.chips.length)
                         .map((index) {
-                  bool isEnabled = enabledChipsIndexes.contains(index);
+                  bool isEnabled = chipStates[index]._isEnabled;
                   return PositionedTransition(
                       key: Key(index.toString()),
                       child: GestureDetector(
                         onTap: () {
-                          _toggleChip(index, isEnabled);
+                          _toggleChip(index);
                         },
                         child: FittedBox(
                           alignment: Alignment.centerLeft,
@@ -145,7 +164,7 @@ class _SortedChipsRowState extends State<SortedChipsRow>
                               chipSpec: this.widget.chips[index],
                               isEnabled: isEnabled,
                               widthCallback: (width) {
-                                chipsWidth[index] = width;
+                                chipStates[index]._width = width;
                                 perhapsLayout();
                               }),
                         ),
