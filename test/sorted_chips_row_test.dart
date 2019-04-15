@@ -5,6 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sorted_chips_row/sorted_chips_row.dart';
 
 void main() {
+  var findChipByLabelAndColor = (Text label, Color color) => find.byWidgetPredicate(
+      (widget) =>
+          widget is Chip &&
+          widget.label == label &&
+          widget.backgroundColor == color);
+
   group('SortedChipsRow', () {
     testWidgets("doesn\'t render Chips if passed empty list",
         (WidgetTester wt) async {
@@ -69,36 +75,15 @@ void main() {
       await wt.pumpAndSettle();
 
       expect(find.byType(Chip), findsNWidgets(2));
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is Chip &&
-              widget.label == spec1.label &&
-              widget.backgroundColor == Colors.black),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is Chip &&
-              widget.label == spec2.label &&
-              widget.backgroundColor == Colors.white),
-          findsOneWidget);
+      expect(findChipByLabelAndColor(spec1.label, Colors.black), findsOneWidget);
+      expect(findChipByLabelAndColor(spec2.label, Colors.white), findsOneWidget);
 
       await wt.tap(find.byType(Chip).first);
       await wt.tap(find.byType(Chip).last);
       await wt.pumpAndSettle();
 
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is Chip &&
-              widget.label == spec1.label &&
-              widget.backgroundColor == Colors.white),
-          findsOneWidget);
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is Chip &&
-              widget.label == spec2.label &&
-              widget.backgroundColor == Colors.black),
-          findsOneWidget);
+      expect(findChipByLabelAndColor(spec1.label, Colors.white), findsOneWidget);
+      expect(findChipByLabelAndColor(spec2.label, Colors.black), findsOneWidget);
     });
   });
 }
