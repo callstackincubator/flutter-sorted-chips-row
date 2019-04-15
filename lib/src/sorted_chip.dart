@@ -1,13 +1,29 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:after_layout/after_layout.dart';
 import './chip_spec.dart';
 
+/// Renders [Chip] according to the provided [ChipSpec].
 class SortedChip extends StatefulWidget {
   final ChipSpec chipSpec;
-  final Function widthCallback;
+  final void Function(double) widthCallback;
   final bool isEnabled;
 
-  const SortedChip({Key key, this.chipSpec, this.widthCallback, this.isEnabled})
+  /// Creates the SortedChip widget.
+  ///
+  /// This widget primarily draws [Chip] according to the passed `chipSpec`,
+  /// while choosing the color scheme based on `isEnabled` argument.
+  ///
+  /// On first render, the widget will execute the passed `widthCallback` with
+  /// the value of `context.size.width`.
+  ///
+  /// Note that the SortedChip widget is Stateful only to satisfy requirements
+  /// of [AfterLayoutMixin].
+  const SortedChip(
+      {Key key,
+      @required this.chipSpec,
+      @required this.widthCallback,
+      @required this.isEnabled})
       : super(key: key);
 
   @override
