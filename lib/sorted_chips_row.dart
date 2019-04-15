@@ -1,3 +1,24 @@
+/// Widget rendering Material Chip widgets in a horizontal, scrollable
+/// container, animating the widgets' positions in container according to the
+/// provided comparator function.
+/// 
+/// Example usage:
+/// 
+/// ```
+/// import 'package:sorted_chips_row/sorted_chips_row.dart'
+/// 
+/// …
+/// 
+/// ChipSpec chip1 = ChipSpec(label: Text('Label One'), initiallyEnabled: true)
+/// ChipSpec chip2 = ChipSpec(label: Text('Label Two'))
+/// 
+/// Comparator<ChipState> chipComparator = (chipState1, chipState2) => …
+/// 
+/// return SortedChipsRow(chips: [chip1, chip2], comparator: chipComparator);
+/// ```
+/// 
+/// Note that the SortedChipsRow needs to have an ancestor providing
+/// [Directionality](https://docs.flutter.io/flutter/widgets/Directionality-class.html).
 library sorted_chips_row;
 
 export './src/chip_spec.dart' show ChipSpec;
