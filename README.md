@@ -6,6 +6,8 @@ A Flutter Widget displaying a row of [Material Chips](https://material.io/design
 
 ## How to use
 
+### Adding dependency
+
 This package is currently available only through GitHub (we'll soon publish it in the `pub` repository). To add this package as a dependency, add the following under `dependencies` section in your `pubspec.yaml`:
 
 ```
@@ -20,6 +22,10 @@ By default this dependency will get upgraded whenever a new version is being pus
 ```
 
 For details see the [dart documentation on Git dependencies](https://www.dartlang.org/tools/pub/dependencies#git-packages)
+
+### Using in code
+
+The main widget class in this package is [`SortedChipsRow`](https://github.com/callstackincubator/flutter-sorted-chips-row/blob/master/lib/src/sorted_chips_row.dart). See the [library's main file](https://github.com/callstackincubator/flutter-sorted-chips-row/blob/master/lib/sorted_chips_row.dart) for usage example.  
 
 ## Getting Started with Flutter
 
