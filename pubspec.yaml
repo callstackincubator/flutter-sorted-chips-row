@@ -1,8 +1,9 @@
 name: sorted_chips_row
-description: A new Flutter package project.
-version: 0.0.1
-author:
-homepage:
+description: Material widget displaying a row of Chip buttons that get sorted,
+  and their position gets animated, according to the given comparison function.
+version: 0.1.0
+author: krzysztof.sroka@callstack.com
+homepage: https://github.com/callstackincubator/flutter-sorted-chips-row
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -11,7 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
   after_layout: ^1.0.7
-  observable: ^0.22.1
 
 dev_dependencies:
   flutter_test:
