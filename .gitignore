@@ -43,6 +43,7 @@ version
 .pub-cache/
 .pub/
 .pubspec.lock
+.metadata
 build/
 flutter_*.png
 linked_*.ds
