@@ -8,7 +8,20 @@ A Flutter Widget displaying a row of [Material Chips](https://material.io/design
 
 ### Adding dependency
 
-This package is currently available only through GitHub (we'll soon publish it in the `pub` repository). To add this package as a dependency, add the following under `dependencies` section in your `pubspec.yaml`:
+#### Regular
+
+Add the following dependency to your `pubspec.yaml` file:
+
+```
+ dependencies:
+   sorted_chips_row: ^0.1.0
+```
+
+You can read more about adding pub dependencies in [Dart documentation](https://www.dartlang.org/tools/pub/dependencies).
+
+#### Bleeding edge
+
+You can also depend on the code from the GitHub repository. To add this package as a dependency from git, add the following under `dependencies` section in your `pubspec.yaml`:
 
 ```
   sorted_chips_row:
@@ -21,7 +34,7 @@ By default this dependency will get upgraded whenever a new version is being pus
       ref: COMMIT_ID
 ```
 
-For details see the [dart documentation on Git dependencies](https://www.dartlang.org/tools/pub/dependencies#git-packages)
+For details see the [Dart documentation on Git dependencies](https://www.dartlang.org/tools/pub/dependencies#git-packages)
 
 ### Using in code
 
