@@ -1,4 +1,4 @@
-\0;95;0cname: sorted_chips_row
+name: sorted_chips_row
 description: Material widget displaying a row of Chip buttons that get sorted,
   and their position gets animated, according to the given comparison function.
 version: 0.1.0+1
